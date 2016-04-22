@@ -16,7 +16,7 @@
       <div class="span9">
       <div class="widget-box">
         <div class="widget-title bg_lg"><span class="icon"><i class="fa fa-inbox"></i></span>
-          <h5>Chiffre d'affaire 2016</h5>
+          <h5>Mon chiffre d'affaire 2016</h5>
         </div>
         <div class="widget-content" >
           <div class="row-fluid">
@@ -60,7 +60,7 @@
           </span><canvas width="50" height="24"></canvas></span><canvas width="50" height="24"></canvas></span>+10%</div>
         <div class="right"> <strong><?php echo $paiementwashers ?>€</strong> CA ANNUEL </div>
       </li>
-      
+
     </ul>
 
     <script type="text/javascript">

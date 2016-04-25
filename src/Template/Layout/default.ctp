@@ -92,9 +92,9 @@
 <?php if($roleAuthUser == 'societe') : ?>
    <div id="sidebar"><a href="#" class="visible-phone"><i class="fa fa-home"></i> Tableau de bord</a>
      <ul style="display: block;">
+       <li class="<?php if ($this->request->action === 'compta'): echo "active" ; endif; ?>">  <?= $this->Html->link(__('<i class="fa fa-clock-o"></i> <span> Comptabilité</span>'),'/comptasocietys/compta',['escape' => false]) ?> </li>
         <li class="<?php if ($this->request->action === 'pointdevente'): echo "active" ; endif; ?>">  <?= $this->Html->link(__('<i class="fa fa-signal"></i> <span> Mes point de vente</span>'),'/comptasocietys/pointdevente',['escape' => false]) ?> </li>
         <li class="<?php if ($this->request->action === 'moncompte'): echo "active" ; endif; ?>">  <?= $this->Html->link(__('<i class="fa fa-gear"></i> <span> Mon compte</span>'),'/comptasocietys/moncompte',['escape' => false]) ?> </li>
-        <li class="<?php if ($this->request->action === 'compta'): echo "active" ; endif; ?>">  <?= $this->Html->link(__('<i class="fa fa-clock-o"></i> <span> Compta</span>'),'/comptasocietys/compta',['escape' => false]) ?> </li>
      </ul>
    </div>
 <?php endif; ?>
@@ -105,16 +105,21 @@
    <div id="sidebar"><a href="#" class="visible-phone"><i class="fa fa-home"></i> Tableau de bord</a>
      <ul style="display: block;">
        <li class="<?php if ($this->request->action === 'index'): echo "active" ; endif; ?>"><?= $this->Html->link(__('<i class="fa fa-home"></i> <span>Tableau de bord</span>'),'/washers/',['escape' => false]) ?></li>
-         <li class="<?php if ($this->request->action === 'mesinfo'): echo "active" ; endif; ?>"><?= $this->Html->link(__('<i class="fa fa-car"></i> <span> Ma société</span>'),'/washers/mesinfo',['escape' => false]) ?></li>
-
-         <li class="submenu <?php if ($this->request->action === 'rdv' or $this->request->action === 'rdvavenir'): echo "open" ; endif; ?>"> <a href="#"><i class="fa fa-calendar"></i> <span>Mes rendez-vous</span> <span class="label label-important">2</span></a>
+    <?php /*
+    <li class="<?php if ($this->request->action === 'mesinfo'): echo "active" ; endif; ?>"><?= $this->Html->link(__('<i class="fa fa-car"></i> <span> Ma société</span>'),'/washers/mesinfo',['escape' => false]) ?></li>
+    */ ?>
+         <li class="submenu <?php if ($this->request->action === 'rdv' or $this->request->action === 'rdvavenir'): echo "open" ; endif; ?>"> <a href="#"><i class="fa fa-calendar"></i> <span>Mes rendez-vous</span> <span class="label label-important"><?php echo $rdvavenircountNb ?></span></a>
         <ul>
-           <li class="<?php if ($this->request->action === 'rdv'): echo "active" ; endif; ?>"><?= $this->Html->link(__('Tous'),'/washers/rdv/') ?></li>
            <li class="<?php if ($this->request->action === 'rdvavenir'): echo "active" ; endif; ?>"><?= $this->Html->link(__('A venir'),'/washers/rdvavenir/') ?></li>
+           <li class="<?php if ($this->request->action === 'rdv'): echo "active" ; endif; ?>"><?= $this->Html->link(__('Effectué'),'/washers/rdv/') ?></li>
+
         </ul>
       </li>
+      <?php /*
         <li class="<?php if ($this->request->action === 'comptabilite'): echo "active" ; endif; ?>">  <?= $this->Html->link(__('<i class="fa fa-signal"></i> <span> Comptabilité</span>'),'/washers/comptabilite',['escape' => false]) ?> </li>
+
         <li class="<?php if ($this->request->action === 'moncompte'): echo "active" ; endif; ?>">  <?= $this->Html->link(__('<i class="fa fa-gear"></i> <span> Mon compte</span>'),'/washers/moncompte',['escape' => false]) ?> </li>
+*/ ?>
         <li class="<?php if ($this->request->action === 'indispo'): echo "active" ; endif; ?>">  <?= $this->Html->link(__('<i class="fa fa-clock-o"></i> <span> Mes indisponibilités</span>'),'/washers/indispo',['escape' => false]) ?> </li>
      </ul>
    </div>

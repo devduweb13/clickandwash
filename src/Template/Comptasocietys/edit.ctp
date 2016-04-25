@@ -19,7 +19,7 @@ $this->end() ;
           <div class="control-group">
             <label class="control-label tip-right">Nom de la société <span class="champ_requis"> * </span></label>
             <div class="controls">
-              <?= $this->Form->input('society_id', ['options' => $societys ,'label'=>false ]); ?>
+              <?= $this->Form->input('society_id', ['options' => $societys ,'label'=>false, 'disabled' => 'disabled']); ?>
             </div>
           </div>
 
@@ -29,6 +29,21 @@ $this->end() ;
               <?= $this->Form->input('nom',['label'=>false , 'placeholder' => 'Nom du point de vente']) ?>
             </div>
           </div>
+
+          <div class="control-group">
+            <label class="control-label">Identifiant <span class="champ_requis"> * </span></label>
+            <div class="controls">
+              <input type="text" readonly="" value="<?php echo $preparateur->id ?>"></input>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">Mot de passe <span class="champ_requis"> * </span></label>
+            <div class="controls">
+              <?= $this->Form->input('passwordre',['label'=>false , 'placeholder' => 'Mot de passe', 'value' => '']) ?>
+            </div>
+          </div>
+
 
 
           <div class="control-group">
@@ -85,7 +100,7 @@ $this->end() ;
           <div class="control-group">
             <label class="control-label">Rayon <span class="champ_requis"> * </span></label>
             <div class="controls tip-right"  data-original-title="Distance en Km">
-             <?= $this->Form->input('rayon',['label'=>false , 'placeholder' => 'rayon d\'intervention en km']) ?>
+             <?= $this->Form->input('rayon',['label'=>false , 'placeholder' => 'rayon d\'intervention en km','disabled' => 'disabled']) ?>
             </div>
           </div>
 

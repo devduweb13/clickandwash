@@ -29,7 +29,7 @@ $this->end() ;
           ?>
           <td><?php echo $this->Time->format($dateDebut, \IntlDateFormatter::TRADITIONAL) ?> </td>
           <td><?php  echo $this->Time->format($dateFin, \IntlDateFormatter::TRADITIONAL)?></td>
-          <td class="center">
+          <td class="center actions">
             <?= $this->Form->postLink(__('<i class="fa fa-trash"></i>'), ['action' => 'delete', $indisponibilitewasher->id], ['confirm' => __('Etes vous certain de vouloir supprimer ? # {0}?', $indisponibilitewasher->id),'escape' => false ]) ?>
           </td>
         </tr>

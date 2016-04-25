@@ -27,7 +27,6 @@ $bdd = new PDO('mysql:host=localhost;dbname=clickandwash;charset=utf8', 'root','
           <th>Paiement</th>
           <th>Note</th>
           <th>Statut</th>
-          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -92,9 +91,7 @@ if ($rdvwasher->etat == 2): echo "Annulation client"; endif;
 if ($rdvwasher->etat == 3): echo "Annulation préparateur"; endif;
              ?>
           </td>
-          <td class="center">
-            <?php  if ($rdvwasher->etat == 0): echo  $this->Form->postLink(__('<i class="fa fa-toggle-off"></i>'), ['action' => 'annulrdv', $rdvwasher->id], ['confirm' => __('Etes vous certain de vouloir annuler le rdv ?  {0}?', $rdvwasher->id),'escape' => false ]) ; endif; ?>
-          </td>
+
         </tr>
   <?php endforeach; ?>
       </tbody>

@@ -24,7 +24,7 @@ $this->end() ;
         </thead>
         <tbody>
     <?php foreach ($factureclicks as $factureclick): ?>
-          <tr class="grade<?= $this->Number->format($indisponibilitewasher->id) ?>">
+          <tr class="grade<?= $this->Number->format($factureclick->id) ?>">
             <?php
             $dateDebut = $indisponibilitewasher->debut;
             $dateFin = $indisponibilitewasher->fin;

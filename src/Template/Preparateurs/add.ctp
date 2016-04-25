@@ -32,6 +32,13 @@ $this->end() ;
             </div>
           </div>
 
+          <div class="control-group">
+            <label class="control-label">Mot de passe <span class="champ_requis"> * </span></label>
+            <div class="controls">
+              <?= $this->Form->input('password',['label'=>false , 'placeholder' => 'Mot de passe']) ?>
+            </div>
+          </div>
+
 
           <div class="control-group">
             <label class="control-label">Adresse <span class="champ_requis"> * </span></label>

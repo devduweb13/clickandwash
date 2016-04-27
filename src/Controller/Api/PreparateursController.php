@@ -31,6 +31,23 @@ class PreparateursController extends AppController
 
   }
 
+  public function listerdv()
+  {
+      $user  = $this->Auth->identify();
+      $rdvsclients = $this->Rdvs->find('all')
+      ->where(['Rdvs.client_id =' => $user['sub'] ]) ; /*CIBLE LES VEHICULES DE L UTILISATEUR*/
+
+      $this->set([
+          'success' => true,
+          'data' => [
+          'Rdv' => $rdvsclients
+           ],
+          '_serialize' => ['success', 'data']
+      ]);
+
+
+  }
+
   public function add()
   {
     $info_data = $this->Preparateurs->newEntity();

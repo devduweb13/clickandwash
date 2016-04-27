@@ -12,7 +12,8 @@
         "cakephp/plugin-installer": "*",
          "chris48s/cakephp-geocoder": "dev-master",
           "friendsofcake/crud":"~4.0",
-        "admad/cakephp-jwt-auth": "2.0.0"
+        "admad/cakephp-jwt-auth": "2.0.0",
+        "akkaweb/cakephp-facebook": "dev-master"
 
     },
     "require-dev": {

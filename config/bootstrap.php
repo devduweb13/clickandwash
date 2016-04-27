@@ -213,8 +213,10 @@ Type::build('datetime')
     ->useImmutable()
     ->useLocaleParser();
 
-    Plugin::load('Chris48s/Geocoder');
+Plugin::load('Chris48s/Geocoder'); /*PLUG IN GEO ENCODAGE*/
 
-Plugin::load('Crud');
+Plugin::load('Crud'); /*PLUG IN REST API*/
 
-Plugin::load('ADmad/JwtAuth');
+Plugin::load('ADmad/JwtAuth'); /*PLUG IN CONNEXION SECURISE*/
+
+Plugin::load('AkkaFacebook', ['bootstrap' => false, 'routes' => true]); /*PLUG IN FACEBOOK*/

@@ -27,6 +27,7 @@ class PreparateursController extends AppController
       $this->loadModel('Horraires');
       $this->loadModel('Rdvs');
       $this->loadModel('Indisponibilites');
+      $this->loadModel('Annulationrdvs');
       parent::initialize();
 
   }
@@ -35,7 +36,8 @@ class PreparateursController extends AppController
   {
       $user  = $this->Auth->identify();
       $rdvsclients = $this->Rdvs->find('all')
-      ->where(['Rdvs.client_id =' => $user['sub'] ]) ; /*CIBLE LES VEHICULES DE L UTILISATEUR*/
+      ->where(['Rdvs.client_id =' => $user['sub'] ])  /*CIBLE LES RDV DE L UTILISATEUR*/
+      ->where(['Rdvs.etat =' => '0' ]) ; /*CIBLE LES RDV EN COURS*/
 
       $this->set([
           'success' => true,
@@ -44,8 +46,57 @@ class PreparateursController extends AppController
            ],
           '_serialize' => ['success', 'data']
       ]);
+  }
 
+  public function annulerdv()
+  {
+    $info_data = $this->Preparateurs->newEntity();
+    $info_data = $this->Preparateurs->patchEntity($info_data, $this->request->data);
 
+      $user  = $this->Auth->identify();
+      $rdvsclients = $this->Rdvs->find('all')
+      ->where(['Rdvs.client_id =' => $user['sub'] ])  /*CIBLE LES RDV DE L UTILISATEUR*/
+      ->where(['Rdvs.id =' => $info_data->rdv_id ]) ; /*CIBLE LES RDV EN COURS*/
+
+      foreach ($rdvsclients as $row) { /*RECUPERATION DES COORDONNE USERS*/
+         $date = $row['date'] ;
+          $datedebutrdv = $row['debut'] ;
+        }
+        $date = new Time($date);
+
+        /*TEST SI ANNULATION REMBOURSEMENT DELAIS*/
+        if($date->isWithinNext(0) === true ) : $remboursement = "Vous avez tous perdu !!!"; endif;
+        if($date->isWithinNext(1) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; endif;
+        if($date->isWithinNext(2) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; endif;
+        if($date->isWithinNext(3) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; endif;
+        if (!isset($remboursement)) : $remboursement = "On vous rembourse intégralement"; endif;
+        /*TEST SI ANNULATION REMBOURSEMENT DELAIS*/
+
+        /*MODIFICATION ETAT RDV EN BASE*/
+        $rdvTable = TableRegistry::get('Rdvs');
+        $rdv = $rdvTable->get($info_data->rdv_id); // Retourne l'article avec l'id 12
+        $rdv->etat = 2;
+        $rdvTable->save($rdv);
+        /*MODIFICATION ETAT RDV EN BASE*/
+
+        /*MODIFICATION ETAT RDV EN BASE*/
+        $rdvannuleTable = TableRegistry::get('Annulationrdvs');
+        $rdvannule = $rdvannuleTable->newEntity();
+        $rdvannule->rdv_id = $info_data->rdv_id;
+        $rdvannule->date = $datedebutrdv;
+        $rdvannule->date_annulation = date("Y-m-d H:i:s");
+        $rdvannule->type = 2;
+        /*MODIFICATION ETAT RDV EN BASE*/
+        $rdvannuleTable->save($rdvannule);
+
+      $this->set([
+          'success' => true,
+          'data' => [
+          'Date' => $date,
+          'rembourse' => $remboursement
+           ],
+          '_serialize' => ['success', 'data']
+      ]);
   }
 
   public function add()

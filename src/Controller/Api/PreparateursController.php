@@ -106,14 +106,14 @@ endif;
 
 /*RECUPERATION ADRESSE CLIENT RDV*/
 
-
-$tableauRdv[$i]['Vehicule'] = $marque->name .' '.$modele->name.' '.$vehiculeclient->annee ."Type : ".$modele->type ;
-$tableauRdv[$i]['Prestation'] =$nomPrestation ;
-$tableauRdv[$i]['Duree'] = $dureePrestation. " Min" ;
-$tableauRdv[$i]['Tarif'] = $tarifPrestation. " € ";
-$tableauRdv[$i]['Debut'] = $rdvsclient->debut->i18nFormat("dd-MM-YYYY HH:mm") ;
+$tableauRdv[$i]['Id']          = $rdvsclient->id;
+$tableauRdv[$i]['Vehicule']    = $marque->name .' '.$modele->name.' '.$vehiculeclient->annee ."Type : ".$modele->type ;
+$tableauRdv[$i]['Prestation']  = $nomPrestation ;
+$tableauRdv[$i]['Duree']       = $dureePrestation. " Min" ;
+$tableauRdv[$i]['Tarif']       = $tarifPrestation. " € ";
+$tableauRdv[$i]['Debut']       = $rdvsclient->debut->i18nFormat("dd-MM-YYYY HH:mm") ;
 $tableauRdv[$i]['Nom Adresse'] = $nomAdresseClient;
-$tableauRdv[$i]['Adresse'] = $rueAdresseClient." ". $cpAdresseClient." ".$villeAdresseClient;
+$tableauRdv[$i]['Adresse']     = $rueAdresseClient." ". $cpAdresseClient." ".$villeAdresseClient;
 $i++;
 }
 
@@ -194,15 +194,16 @@ $i++;
       foreach ($rdvsclients as $row) { /*RECUPERATION DES COORDONNE USERS*/
          $date = $row['date'] ;
           $datedebutrdv = $row['debut'] ;
+          $montantRdv = $row['montant'] ;
         }
         $date = new Time($date);
 
         /*TEST SI ANNULATION REMBOURSEMENT DELAIS*/
-        if($date->isWithinNext(0) === true ) : $remboursement = "Vous avez tous perdu !!!"; endif;
-        if($date->isWithinNext(1) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; endif;
-        if($date->isWithinNext(2) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; endif;
-        if($date->isWithinNext(3) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; endif;
-        if (!isset($remboursement)) : $remboursement = "On vous rembourse intégralement"; endif;
+        if($date->isToday() === true ) : $remboursement = "Vous avez tous perdu !!!"; $montantRdvFinal = 0 ;endif;
+        if($date->isWithinNext(1) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; $montantRdvFinal = $montantRdv/2;  endif;
+        if($date->isWithinNext(2) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; $montantRdvFinal = $montantRdv/2; endif;
+        if($date->isWithinNext(3) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; $montantRdvFinal = $montantRdv/2; endif;
+        if (!isset($remboursement)) : $remboursement = "On vous rembourse intégralement"; $montantRdvFinal = $montantRdv; endif;
         /*TEST SI ANNULATION REMBOURSEMENT DELAIS*/
 
         /*MODIFICATION ETAT RDV EN BASE*/
@@ -226,7 +227,8 @@ $i++;
           'success' => true,
           'data' => [
           'Date' => $date,
-          'rembourse' => $remboursement
+          'remboursement' => $remboursement,
+          'montant remboursé' => $montantRdvFinal
            ],
           '_serialize' => ['success', 'data']
       ]);
@@ -349,10 +351,13 @@ function LimiteCreneau($Fnheure_deb_retour,$Fnheure_fin_retour)
 function AffichageHorraire($FnHeure_deb_retour,$FnLimite_q ,$FnDateAffichage,$FnLat_wash,$FnLon_wash,$Fnlat,$Fnlon,$Fndelais,$FnindispoPreparateur,$Fncompteur,$FnidPrepa,$Fntableau,$Fni,$FnClick,$fnIndispovacant)
 {
 
+$tableauIndispoRdvDeb = array();
+$tableauIndispoRdvFin = array();
+$Nbi = 0 ;
   /*TEST SI EN RDV*/
   foreach($FnindispoPreparateur as $row4)
   {
-  $num = 1 ;
+
   $test_indispo_deb = $row4['debut']->i18nFormat("HH:mm");
   $test_indispo_fin = $row4['fin']->i18nFormat("HH:mm");
   $test_indispo_jour = $row4['date']->i18nFormat("dd-MM-YYYY");
@@ -362,6 +367,8 @@ function AffichageHorraire($FnHeure_deb_retour,$FnLimite_q ,$FnDateAffichage,$Fn
 
   if($test_indispo_jour == $FnDateAffichage ):
   $indispo = true ;
+  $tableauIndispoRdvDeb[$Nbi] = strtotime($test_indispo_jour.' '.$test_indispo_deb);
+  $tableauIndispoRdvFin[$Nbi] = strtotime($test_indispo_jour.' '.$test_indispo_fin);
   endif;
 
   if (!isset($test_indispo_deb)):
@@ -371,11 +378,8 @@ function AffichageHorraire($FnHeure_deb_retour,$FnLimite_q ,$FnDateAffichage,$Fn
   $lat_indispo = "";
   $lon_indispo = "";
   endif;
-
+  $Nbi++;
   }
-
-
-
 
   /*FIN TEST SI EN RDV*/
 
@@ -464,28 +468,43 @@ function AffichageHorraire($FnHeure_deb_retour,$FnLimite_q ,$FnDateAffichage,$Fn
        else /*SI PAS EN CONGE NI RDV ON GENERE LE TABLEAU FINAL*/
        {
 
-/*
-         $dateTestFinal = Time::parse($FnDateAffichage) ;
-         $DateTestJourFinal = $dateTestFinal->i18nFormat('yyyy-MM-dd' );
+              $nbentrreRdv = count($tableauIndispoRdvDeb);
 
-         $rdvsTable = TableRegistry::get('Rdvs');
-         $rdvTestFinal = $rdvsTable->find()
-         ->where(['Rdvs.preparateur_id =' => $FnidPrepa ])
-         ->andWhere(['Rdvs.etat =' => 0])
-         ->andWhere(['Rdvs.date =' => $DateTestJourFinal]);
+              if($nbentrreRdv == 0 ): /*SI AUCUNE INDISPO ON REMPLI LE TABLEAU*/
+               $Fntableau[$ValeurUnique]['ClickAndWash']  = $FnClick ;
+               $Fntableau[$ValeurUnique]['id']            = $FnidPrepa ;
+               $Fntableau[$ValeurUnique]['Duree trajet']  = $delais ;
+               $Fntableau[$ValeurUnique]['Jour']          = $FnDateAffichage ;
+               $Fntableau[$ValeurUnique]['Heure']         = $heure_deb_retour2 ;
+               $Fntableau[$ValeurUnique]['Unique']        = $ValeurUnique;
+               $Fntableau[$ValeurUnique]['Indispo Début'] = $tableauIndispoRdvDeb ;
+               $Fntableau[$ValeurUnique]['Indispo Fin']   = $tableauIndispoRdvFin;
+               $Fntableau[$ValeurUnique]['Compteur']   = $nbentrreRdv;
+             endif;
+
+             if ($nbentrreRdv > 0 ): /*SI  INDISPO ON TEST LA DATE UNIQUE AVANT DE REMPLIR LE TABLEAU*/
+
+               for ($ni=0; $ni < $nbentrreRdv; $ni++) {
+                if (($ValeurUnique >= $tableauIndispoRdvDeb[$ni] ) && ( $ValeurUnique <= $tableauIndispoRdvFin[$ni]) )
+                {
+                  break;
+                }
+                  else {
+                    $Fntableau[$ValeurUnique]['ClickAndWash']  = $FnClick ;
+                    $Fntableau[$ValeurUnique]['id']            = $FnidPrepa ;
+                    $Fntableau[$ValeurUnique]['Duree trajet']  = $delais ;
+                    $Fntableau[$ValeurUnique]['Jour']          = $FnDateAffichage ;
+                    $Fntableau[$ValeurUnique]['Heure']         = $heure_deb_retour2 ;
+                    $Fntableau[$ValeurUnique]['Unique']        = $ValeurUnique;
+                    $Fntableau[$ValeurUnique]['Indispo Début'] = $tableauIndispoRdvDeb ;
+                    $Fntableau[$ValeurUnique]['Indispo Fin']   = $tableauIndispoRdvFin;
+                    $Fntableau[$ValeurUnique]['Compteur']   = $nbentrreRdv;
+                  }
+               }
 
 
-foreach ($rdvTestFinal as $key) {
 
-}
-*/
-               $Fntableau[$ValeurUnique]['ClickAndWash'] = $FnClick ;
-               $Fntableau[$ValeurUnique]['id']           = $FnidPrepa ;
-               $Fntableau[$ValeurUnique]['Duree trajet'] = $delais ;
-               $Fntableau[$ValeurUnique]['Jour']         = $FnDateAffichage ;
-               $Fntableau[$ValeurUnique]['Heure']        = $heure_deb_retour2 ;
-               $Fntableau[$ValeurUnique]['Unique']       = $ValeurUnique;
-
+             endif;
        }
 
       endif;

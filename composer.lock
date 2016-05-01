@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "99df0fe4019e07934ce080418155300b",
-    "content-hash": "8c3e1e405159483b57e50a044861b1b9",
+    "hash": "c5d5a8b90799aefcb23247c99d3087f2",
+    "content-hash": "a0320de749b549b05807e1e60208c3f1",
     "packages": [
         {
             "name": "admad/cakephp-jwt-auth",
@@ -51,6 +51,54 @@
                 "jwt"
             ],
             "time": "2016-02-18 06:27:50"
+        },
+        {
+            "name": "akkaweb/cakephp-facebook",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/akkaweb/AKKA-CakePHP-Facebook-Plugin.git",
+                "reference": "5444669c016925eeeb4a23dd0904a277b926fb75"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/akkaweb/AKKA-CakePHP-Facebook-Plugin/zipball/5444669c016925eeeb4a23dd0904a277b926fb75",
+                "reference": "5444669c016925eeeb4a23dd0904a277b926fb75",
+                "shasum": ""
+            },
+            "require": {
+                "facebook/php-sdk-v4": "4.0.*",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "cakephp-plugin",
+            "extra": {
+                "installer-name": "AkkaFacebook"
+            },
+            "autoload": {
+                "psr-4": {
+                    "AkkaFacebook\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andre Santiago",
+                    "email": "admin@akkaweb.com"
+                }
+            ],
+            "description": "CakePHP 3 Facebook Plugin",
+            "keywords": [
+                "cakephp",
+                "cakephp3",
+                "facebook"
+            ],
+            "time": "2016-03-23 17:39:04"
         },
         {
             "name": "aura/installer-default",
@@ -173,16 +221,16 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "3.2.7",
+            "version": "3.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "2d6e369b3cb216bc861453beb223f5b973d4a61d"
+                "reference": "c263b386982abd22d38d171ebdc56ab64881030a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/2d6e369b3cb216bc861453beb223f5b973d4a61d",
-                "reference": "2d6e369b3cb216bc861453beb223f5b973d4a61d",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/c263b386982abd22d38d171ebdc56ab64881030a",
+                "reference": "c263b386982abd22d38d171ebdc56ab64881030a",
                 "shasum": ""
             },
             "require": {
@@ -241,7 +289,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2016-04-11 01:25:26"
+            "time": "2016-04-25 01:54:25"
         },
         {
             "name": "cakephp/chronos",
@@ -440,6 +488,55 @@
             "time": "2016-01-29 20:25:56"
         },
         {
+            "name": "facebook/php-sdk-v4",
+            "version": "4.0.23",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/facebook/facebook-php-sdk-v4.git",
+                "reference": "c82611e05596622c9bd7abfa1cea1512d885c95e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/facebook/facebook-php-sdk-v4/zipball/c82611e05596622c9bd7abfa1cea1512d885c95e",
+                "reference": "c82611e05596622c9bd7abfa1cea1512d885c95e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "~4.0",
+                "mockery/mockery": "dev-master",
+                "phpunit/phpunit": "3.7.*"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "Allows for implementation of the Guzzle HTTP client"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Facebook\\": "src/Facebook/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Facebook Platform"
+            ],
+            "authors": [
+                {
+                    "name": "Facebook",
+                    "homepage": "https://github.com/facebook/facebook-php-sdk-v4/contributors"
+                }
+            ],
+            "description": "Facebook SDK for PHP",
+            "homepage": "https://github.com/facebook/facebook-php-sdk-v4",
+            "keywords": [
+                "facebook",
+                "sdk"
+            ],
+            "time": "2015-04-03 20:31:47"
+        },
+        {
             "name": "firebase/php-jwt",
             "version": "v3.0.0",
             "source": {
@@ -558,16 +655,16 @@
         },
         {
             "name": "mobiledetect/mobiledetectlib",
-            "version": "2.8.21",
+            "version": "2.8.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "edf31d000b1166e0f78f3498b688c7b11a849499"
+                "reference": "53cddae0c272a478b24a4b5fb60d0f838caf70b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/edf31d000b1166e0f78f3498b688c7b11a849499",
-                "reference": "edf31d000b1166e0f78f3498b688c7b11a849499",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/53cddae0c272a478b24a4b5fb60d0f838caf70b6",
+                "reference": "53cddae0c272a478b24a4b5fb60d0f838caf70b6",
                 "shasum": ""
             },
             "require": {
@@ -608,7 +705,7 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2016-04-18 15:04:00"
+            "time": "2016-04-24 09:47:16"
         },
         {
             "name": "psr/log",
@@ -1444,6 +1541,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "chris48s/cakephp-geocoder": 20,
+        "akkaweb/cakephp-facebook": 20,
         "psy/psysh": 0
     },
     "prefer-stable": true,

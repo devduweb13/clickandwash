@@ -76,7 +76,7 @@ class SocietysController extends AppController
                             $user = $usersTable->newEntity();
 
                             $user->password = $society->password ;
-                            $user->username = $society->name ;
+                            $user->username = $society->mail ;
                             $user->role = 'societe' ;
 
 

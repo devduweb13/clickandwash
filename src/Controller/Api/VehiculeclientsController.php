@@ -16,6 +16,10 @@ class VehiculeclientsController extends AppController
   {
 
       $this->loadModel('Clients');
+      $this->loadModel('Vehiculeclients');
+      $this->loadModel('Vehicules');
+      $this->loadModel('Modeles');
+      $this->loadModel('Marques');
       parent::initialize();
 
   }
@@ -30,10 +34,38 @@ class VehiculeclientsController extends AppController
         $vehiculeclients = $this->Vehiculeclients->find('all')
         ->where(['Vehiculeclients.client_id =' => $user['sub'] ]) ; /*CIBLE LES VEHICULES DE L UTILISATEUR*/
 
+
+$i = 0 ;
+$tableauVehiculeClient = array();
+
+foreach ($vehiculeclients as $vehiculeclient ) {
+  $vehicules           = $this->Vehicules->find('all')
+  ->where(['id         =' => $vehiculeclient->vehicule_id ]);
+
+
+foreach ($vehicules as $vehicule ) {
+  $marques             = $this->Marques->find('all')
+  ->where(['Marques.id =' => $vehicule->marque_id ]);
+}
+
+foreach ($marques as $marque ) {
+   $modeles            = $this->Modeles->find('all')
+  ->where(['Modeles.id =' => $vehicule->modele_id ]);
+}
+foreach ($modeles as $modele ) {
+}
+
+$tableauVehiculeClient[$i]['Marque'] = $marque->name ;
+$tableauVehiculeClient[$i]['Modele'] = $modele->name ;
+$tableauVehiculeClient[$i]['Annee']  = $vehiculeclient->annee ;
+$tableauVehiculeClient[$i]['Type']   = $modele->type;
+$i++;
+}
+
         $this->set([
             'success' => true,
             'data' => [
-            'vehiculeclients' => $vehiculeclients
+            'vehiculeclients' => $tableauVehiculeClient
              ],
             '_serialize' => ['success', 'data']
         ]);

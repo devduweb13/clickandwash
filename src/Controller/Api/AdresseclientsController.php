@@ -19,6 +19,23 @@ class AdresseclientsController extends AppController
       parent::initialize();
 
   }
+
+public function mesadresse()
+{
+  $user  = $this->Auth->identify(); /*Recupere les adresses clients*/
+  $Adresses = $this->Adresseclients->find('all')
+  ->where(['Adresseclients.client_id =' => $user['sub'] ]);
+
+  $this->set([
+      'success' => true,
+      'data' => [
+      'Adresses Client' => $Adresses
+       ],
+      '_serialize' => ['success', 'data']
+  ]);
+
+}
+
   /**
    * Add method
    *

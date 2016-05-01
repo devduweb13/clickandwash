@@ -85,7 +85,9 @@ Router::prefix( 'Api' , function  ( $routes )  {
      $routes ->resources( 'Adresseclients' );
      Router::connect('/api/clients/register', ['controller' => 'Clients', 'action' => 'add', 'prefix' => 'api']);
      Router::connect('/api/preparateurs/rdv', ['controller' => 'Preparateurs', 'action' => 'add', 'prefix' => 'api']);
+     Router::connect('/api/preparateurs/mesrdv', ['controller' => 'Preparateurs', 'action' => 'listerdv', 'prefix' => 'api']);
      $routes->fallbacks('InflectedRoute');
+
 });
 /*CONFIGURATION API RETOUR JSON DOSSIER Api*/
 

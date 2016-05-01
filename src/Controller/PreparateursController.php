@@ -165,9 +165,9 @@ class PreparateursController extends AppController
                          $usersTable = TableRegistry::get('Users');
                          $user = $usersTable->newEntity();
 
-                         $user->password = "123456" ;
+                         $user->password = $preparateur->password  ;
                          $user->preparateur_id = $preparateur->id ;
-                         $user->username = $preparateur->nom ;
+                         $user->username = $preparateur->id ;
                          $user->role = 'preparateur' ;
                          if ($usersTable->save($user)) {  }
 

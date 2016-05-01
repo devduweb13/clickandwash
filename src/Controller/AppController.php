@@ -64,6 +64,7 @@ class AppController extends Controller
         $this->set('roleAuthUser', $this->Auth->user('role'));
         $this->set('nomAuthUser', $this->Auth->user('username'));
         $this->set('idWasherAuthUser', $this->Auth->user('preparateur_id'));
+        
     }
 
     public function isAuthorized($user)

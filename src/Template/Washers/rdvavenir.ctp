@@ -24,10 +24,8 @@ $bdd = new PDO('mysql:host=localhost;dbname=clickandwash;charset=utf8', 'root','
           <th>Adresse</th>
           <th>Prestation</th>
           <th>Montant</th>
-          <th>Paiement</th>
-          <th>Note</th>
           <th>Statut</th>
-          <th>Action</th>
+          <th>Annuler</th>
         </tr>
       </thead>
       <tbody>
@@ -65,25 +63,7 @@ $reponse = $bdd->query("SELECT * FROM vehicules WHERE id = '".$rdvwasher->vehicu
        }
 ?>
           </td>
-          <td>
-            <?php
-            $reponse = $bdd->query("SELECT * FROM paiements WHERE rdv_id = '".$rdvwasher->id ."' ");
-                   while ($donnees = $reponse->fetch())
-                   {
-                     echo $donnees["montant"]. "€";
-                   }
-             ?>
-          </td>
-          <td>
-            <?php
-            $reponse = $bdd->query("SELECT * FROM noterdvs WHERE rdv_id = '".$rdvwasher->id ."' ");
-                   while ($donnees = $reponse->fetch())
-                   {
-                     echo $donnees["note"]. " / 5";
-                   }
-             ?>
 
-          </td>
           <td>
             <?php
 if ($rdvwasher->etat == 0): echo "A venir"; endif;
@@ -92,8 +72,8 @@ if ($rdvwasher->etat == 2): echo "Annulation client"; endif;
 if ($rdvwasher->etat == 3): echo "Annulation préparateur"; endif;
              ?>
           </td>
-          <td class="center">
-            <?php  if ($rdvwasher->etat == 0): echo  $this->Form->postLink(__('<i class="fa fa-toggle-off"></i>'), ['action' => 'annulrdv', $rdvwasher->id], ['confirm' => __('Etes vous certain de vouloir annuler le rdv ?  {0}?', $rdvwasher->id),'escape' => false ]) ; endif; ?>
+          <td class="center actions">
+            <?php  if ($rdvwasher->etat == 0): echo  $this->Form->postLink(__('<i class="fa fa-ban"></i>'), ['action' => 'annulrdv', $rdvwasher->id], ['confirm' => __('Etes vous certain de vouloir annuler le rdv ?  {0}?', $rdvwasher->id),'escape' => false ]) ; endif; ?>
           </td>
         </tr>
   <?php endforeach; ?>

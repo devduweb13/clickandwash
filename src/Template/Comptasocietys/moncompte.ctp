@@ -5,7 +5,10 @@ echo $this->Html->css(['select2']);
 $this->end() ;
 /*FIN CHARGEMENT CSS SPECIFIQUE*/
 ?>
-TEst
+
+
+
+
 <?php
 /*CHARGEMENT JAVASCRIPT SPECIFIQUE*/
 $this->start('scriptBottom');

@@ -21,14 +21,217 @@ class PreparateursController extends AppController
       $this->loadModel('Vehiculeclients');
       $this->loadModel('Vehicules');
       $this->loadModel('Modeles');
+      $this->loadModel('Marques');
       $this->loadModel('Prestations');
       $this->loadModel('Societys');
       $this->loadModel('Clients');
       $this->loadModel('Horraires');
       $this->loadModel('Rdvs');
       $this->loadModel('Indisponibilites');
+      $this->loadModel('Annulationrdvs');
       parent::initialize();
 
+  }
+
+  public function listerdv()
+  {
+      $user  = $this->Auth->identify();
+      $rdvsclients = $this->Rdvs->find('all')
+      ->where(['Rdvs.client_id =' => $user['sub'] ])  /*CIBLE LES RDV DE L UTILISATEUR*/
+      ->where(['Rdvs.etat =' => '0' ]) ; /*CIBLE LES RDV EN COURS*/
+
+
+$tableauRdv = array();
+$i = 1 ;
+foreach ($rdvsclients as $rdvsclient ) {
+
+
+
+/*RECUPERATION INFO VEHICULE CLIENT*/
+  $vehiculeclients     = $this->Vehiculeclients->find('all')
+  ->where(['id         =' => $rdvsclient->vehicule_id ]);
+
+foreach ($vehiculeclients as $vehiculeclient ) {
+  $vehicules           = $this->Vehicules->find('all')
+  ->where(['id         =' => $vehiculeclient->vehicule_id ]);
+}
+
+foreach ($vehicules as $vehicule ) {
+  $marques             = $this->Marques->find('all')
+  ->where(['Marques.id =' => $vehicule->marque_id ]);
+}
+
+foreach ($marques as $marque ) {
+   $modeles            = $this->Modeles->find('all')
+  ->where(['Modeles.id =' => $vehicule->modele_id ]);
+}
+
+foreach ($modeles as $modele ) {
+}
+/*RECUPERATION INFO VEHICULE CLIENT*/
+
+/*RECUPERATION ADRESSE CLIENT RDV*/
+$adressesclients     = $this->Adresseclients->find('all')
+->where(['id         =' => $rdvsclient->adresseclient_id ]);
+
+foreach ($adressesclients as $adressesclient ) {
+  $nomAdresseClient = $adressesclient->name;
+  $rueAdresseClient = $adressesclient->adresse;
+  $cpAdresseClient = $adressesclient->cp;
+  $villeAdresseClient = $adressesclient->ville;
+}
+/*RECUPERATION ADRESSE CLIENT RDV*/
+
+/*RECUPERATION ADRESSE CLIENT RDV*/
+$prestations     = $this->Prestations->find('all')
+->where(['id         =' => $rdvsclient->prestation_id ]);
+
+foreach ($prestations as $prestation ) {
+  $nomPrestation = $prestation->name;
+
+if($modele->type == 1):
+  $tarifPrestation = $prestation->tarif1;
+  $dureePrestation = $prestation->duree1;
+endif;
+if($modele->type == 2):
+  $tarifPrestation = $prestation->tarif2;
+  $dureePrestation = $prestation->duree2;
+
+endif;
+if($modele->type == 3):
+  $tarifPrestation = $prestation->tarif3;
+  $dureePrestation = $prestation->duree3;
+endif;
+}
+
+/*RECUPERATION ADRESSE CLIENT RDV*/
+
+$tableauRdv[$i]['Id']          = $rdvsclient->id;
+$tableauRdv[$i]['Vehicule']    = $marque->name .' '.$modele->name.' '.$vehiculeclient->annee ."Type : ".$modele->type ;
+$tableauRdv[$i]['Prestation']  = $nomPrestation ;
+$tableauRdv[$i]['Duree']       = $dureePrestation. " Min" ;
+$tableauRdv[$i]['Tarif']       = $tarifPrestation. " € ";
+$tableauRdv[$i]['Debut']       = $rdvsclient->debut->i18nFormat("dd-MM-YYYY HH:mm") ;
+$tableauRdv[$i]['Nom Adresse'] = $nomAdresseClient;
+$tableauRdv[$i]['Adresse']     = $rueAdresseClient." ". $cpAdresseClient." ".$villeAdresseClient;
+$i++;
+}
+
+
+      $this->set([
+          'success' => true,
+          'data' => [
+          'Rdv' => $tableauRdv
+           ],
+          '_serialize' => ['success', 'data']
+      ]);
+  }
+
+  public function priserdv()
+  {
+    $user  = $this->Auth->identify();
+
+    $info_data = $this->Preparateurs->newEntity();
+    $info_data = $this->Preparateurs->patchEntity($info_data, $this->request->data);
+
+    $debutIns = new Time($info_data->date.' '.$info_data->heure);
+
+    $debut = new Time($info_data->date.' '.$info_data->heure);
+    $fin = $debut->modify('+'. $info_data->duree.' minutes');
+
+
+    /*INSERTION EN BASE DU NOUVEAU RDV*/
+    $rdvTable = TableRegistry::get('Rdvs');
+    $newrdv = $rdvTable->newEntity();
+
+
+    $newrdv->preparateur_id   = $info_data->preparateur_id;
+    $newrdv->client_id        = $user['sub'];
+    $newrdv->vehicule_id      = $info_data->vehicule_id;
+    $newrdv->prestation_id    = $info_data->prestation_id;
+    $newrdv->date             = $debut->i18nFormat("YYYY-MM-dd");
+    $newrdv->duree            = $info_data->duree;
+    $newrdv->montant          = $info_data->montant;
+    $newrdv->debut            = $debutIns->i18nFormat("YYYY-MM-dd HH:mm");
+    $newrdv->fin              = $fin->i18nFormat("YYYY-MM-dd HH:mm");
+    $newrdv->adresseclient_id = $info_data->adresseclient_id;
+    $newrdv->lat              = $info_data->lat;
+    $newrdv->lon              = $info_data->lon;
+    $newrdv->etat             = 0;
+
+  if ($rdvTable->save($newrdv)) {
+    $this->set([
+        'success' => true,
+        'data' => [
+        'Date' => $debut->i18nFormat("dd-MM-YYYY HH:mm")
+         ],
+        '_serialize' => ['success', 'data']
+    ]);
+  }
+  else {
+    $this->set([
+        'success' => false,
+        'data' => [
+        'Message' => "Une erreur s'est produite votre rdv n'a pas été validé, veuillez recommencer."
+         ],
+        '_serialize' => ['success', 'data']
+    ]);
+  }
+
+  }
+
+
+  public function annulerdv()
+  {
+    $info_data = $this->Preparateurs->newEntity();
+    $info_data = $this->Preparateurs->patchEntity($info_data, $this->request->data);
+
+      $user  = $this->Auth->identify();
+      $rdvsclients = $this->Rdvs->find('all')
+      ->where(['Rdvs.client_id =' => $user['sub'] ])  /*CIBLE LES RDV DE L UTILISATEUR*/
+      ->where(['Rdvs.id =' => $info_data->rdv_id ]) ; /*CIBLE LES RDV EN COURS*/
+
+      foreach ($rdvsclients as $row) { /*RECUPERATION DES COORDONNE USERS*/
+         $date = $row['date'] ;
+          $datedebutrdv = $row['debut'] ;
+          $montantRdv = $row['montant'] ;
+        }
+        $date = new Time($date);
+
+        /*TEST SI ANNULATION REMBOURSEMENT DELAIS*/
+        if($date->isToday() === true ) : $remboursement = "Vous avez tous perdu !!!"; $montantRdvFinal = 0 ;endif;
+        if($date->isWithinNext(1) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; $montantRdvFinal = $montantRdv/2;  endif;
+        if($date->isWithinNext(2) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; $montantRdvFinal = $montantRdv/2; endif;
+        if($date->isWithinNext(3) === true ) : $remboursement = "Vous avez perdu 50% de votre reservation"; $montantRdvFinal = $montantRdv/2; endif;
+        if (!isset($remboursement)) : $remboursement = "On vous rembourse intégralement"; $montantRdvFinal = $montantRdv; endif;
+        /*TEST SI ANNULATION REMBOURSEMENT DELAIS*/
+
+        /*MODIFICATION ETAT RDV EN BASE*/
+        $rdvTable = TableRegistry::get('Rdvs');
+        $rdv = $rdvTable->get($info_data->rdv_id); // Retourne l'article avec l'id 12
+        $rdv->etat = 2;
+        $rdvTable->save($rdv);
+        /*MODIFICATION ETAT RDV EN BASE*/
+
+        /*MODIFICATION ETAT RDV EN BASE*/
+        $rdvannuleTable = TableRegistry::get('Annulationrdvs');
+        $rdvannule = $rdvannuleTable->newEntity();
+        $rdvannule->rdv_id = $info_data->rdv_id;
+        $rdvannule->date = $datedebutrdv;
+        $rdvannule->date_annulation = date("Y-m-d H:i:s");
+        $rdvannule->type = 2;
+        /*MODIFICATION ETAT RDV EN BASE*/
+        $rdvannuleTable->save($rdvannule);
+
+      $this->set([
+          'success' => true,
+          'data' => [
+          'Date' => $date,
+          'remboursement' => $remboursement,
+          'montant remboursé' => $montantRdvFinal
+           ],
+          '_serialize' => ['success', 'data']
+      ]);
   }
 
   public function add()
@@ -148,12 +351,13 @@ function LimiteCreneau($Fnheure_deb_retour,$Fnheure_fin_retour)
 function AffichageHorraire($FnHeure_deb_retour,$FnLimite_q ,$FnDateAffichage,$FnLat_wash,$FnLon_wash,$Fnlat,$Fnlon,$Fndelais,$FnindispoPreparateur,$Fncompteur,$FnidPrepa,$Fntableau,$Fni,$FnClick,$fnIndispovacant)
 {
 
-
-
-
+$tableauIndispoRdvDeb = array();
+$tableauIndispoRdvFin = array();
+$Nbi = 0 ;
   /*TEST SI EN RDV*/
   foreach($FnindispoPreparateur as $row4)
   {
+
   $test_indispo_deb = $row4['debut']->i18nFormat("HH:mm");
   $test_indispo_fin = $row4['fin']->i18nFormat("HH:mm");
   $test_indispo_jour = $row4['date']->i18nFormat("dd-MM-YYYY");
@@ -163,6 +367,8 @@ function AffichageHorraire($FnHeure_deb_retour,$FnLimite_q ,$FnDateAffichage,$Fn
 
   if($test_indispo_jour == $FnDateAffichage ):
   $indispo = true ;
+  $tableauIndispoRdvDeb[$Nbi] = strtotime($test_indispo_jour.' '.$test_indispo_deb);
+  $tableauIndispoRdvFin[$Nbi] = strtotime($test_indispo_jour.' '.$test_indispo_fin);
   endif;
 
   if (!isset($test_indispo_deb)):
@@ -172,7 +378,9 @@ function AffichageHorraire($FnHeure_deb_retour,$FnLimite_q ,$FnDateAffichage,$Fn
   $lat_indispo = "";
   $lon_indispo = "";
   endif;
+  $Nbi++;
   }
+
   /*FIN TEST SI EN RDV*/
 
   $retourLatRdv = $FnLat_wash ; /*DEFINITION DE LA LAT ORIFGINE*/
@@ -244,7 +452,7 @@ function AffichageHorraire($FnHeure_deb_retour,$FnLimite_q ,$FnDateAffichage,$Fn
       /*FIN TEST SI EN VACANCES*/
 
 
-     if($heure_deb_retour2 > $debutDispoTest):
+     if($heure_deb_retour2 >= $debutDispoTest):
 
       $dateUnique = Time::parse($FnDateAffichage.' '.$heure_deb_retour2) ;
       $ValeurUnique = strtotime($dateUnique->i18nFormat('yyyy-MM-dd HH:mm:ss') );
@@ -252,19 +460,51 @@ function AffichageHorraire($FnHeure_deb_retour,$FnLimite_q ,$FnDateAffichage,$Fn
       $dateTest = $dateTest + $delais*60;
 
 
-     if($ValeurUnique > $dateTest ):
+     if($ValeurUnique >= $dateTest ):
 
        if ($vacant == 1 ) /*TEST SI WASHER EST EN CONGE $vacant 1 = EN CONGE PAS D AFFICHAGE */
        {
        }
        else /*SI PAS EN CONGE NI RDV ON GENERE LE TABLEAU FINAL*/
        {
-      $Fntableau[$ValeurUnique]['ClickAndWash'] = $FnClick ;
-      $Fntableau[$ValeurUnique]['id']           = $FnidPrepa ;
-      $Fntableau[$ValeurUnique]['Duree trajet'] = $delais ;
-      $Fntableau[$ValeurUnique]['Jour']         = $FnDateAffichage ;
-      $Fntableau[$ValeurUnique]['Heure']        = $heure_deb_retour2 ;
-      $Fntableau[$ValeurUnique]['Unique']       = $ValeurUnique;
+
+              $nbentrreRdv = count($tableauIndispoRdvDeb);
+
+              if($nbentrreRdv == 0 ): /*SI AUCUNE INDISPO ON REMPLI LE TABLEAU*/
+               $Fntableau[$ValeurUnique]['ClickAndWash']  = $FnClick ;
+               $Fntableau[$ValeurUnique]['id']            = $FnidPrepa ;
+               $Fntableau[$ValeurUnique]['Duree trajet']  = $delais ;
+               $Fntableau[$ValeurUnique]['Jour']          = $FnDateAffichage ;
+               $Fntableau[$ValeurUnique]['Heure']         = $heure_deb_retour2 ;
+               $Fntableau[$ValeurUnique]['Unique']        = $ValeurUnique;
+               $Fntableau[$ValeurUnique]['Indispo Début'] = $tableauIndispoRdvDeb ;
+               $Fntableau[$ValeurUnique]['Indispo Fin']   = $tableauIndispoRdvFin;
+               $Fntableau[$ValeurUnique]['Compteur']   = $nbentrreRdv;
+             endif;
+
+             if ($nbentrreRdv > 0 ): /*SI  INDISPO ON TEST LA DATE UNIQUE AVANT DE REMPLIR LE TABLEAU*/
+
+               for ($ni=0; $ni < $nbentrreRdv; $ni++) {
+                if (($ValeurUnique >= $tableauIndispoRdvDeb[$ni] ) && ( $ValeurUnique <= $tableauIndispoRdvFin[$ni]) )
+                {
+                  break;
+                }
+                  else {
+                    $Fntableau[$ValeurUnique]['ClickAndWash']  = $FnClick ;
+                    $Fntableau[$ValeurUnique]['id']            = $FnidPrepa ;
+                    $Fntableau[$ValeurUnique]['Duree trajet']  = $delais ;
+                    $Fntableau[$ValeurUnique]['Jour']          = $FnDateAffichage ;
+                    $Fntableau[$ValeurUnique]['Heure']         = $heure_deb_retour2 ;
+                    $Fntableau[$ValeurUnique]['Unique']        = $ValeurUnique;
+                    $Fntableau[$ValeurUnique]['Indispo Début'] = $tableauIndispoRdvDeb ;
+                    $Fntableau[$ValeurUnique]['Indispo Fin']   = $tableauIndispoRdvFin;
+                    $Fntableau[$ValeurUnique]['Compteur']   = $nbentrreRdv;
+                  }
+               }
+
+
+
+             endif;
        }
 
       endif;
@@ -373,14 +613,13 @@ $tableauRetour = array (); /*Initialisation tableau retour vide*/
 
                                             $DateTestRdv = $debutDate->i18nFormat("YYYY-MM-dd");
 
-                                            $indispo = false;
+                                        /*  $indispo = false; */
 
                                             /*CONNEXION TABLE RDV */
                                             $indispoPreparateur = $this->Rdvs->find('all')
                                             ->where(['Rdvs.preparateur_id =' => $row2->preparateur_id ])
                                             ->andWhere(['Rdvs.etat =' => 0])
                                             ->andWhere(['Rdvs.date =' => $DateTestRdv]);
-                                             /*CIBLE LES VEHICULE DE L UTILISATEUR*/
                                             /*FIN CONNEXION TABLE RDV */
 
                                             /*EXTRACTION JOUR POINTAGE DEBUT TABLE*/
@@ -650,9 +889,6 @@ $TableauWacherR = array_merge($TableauWasherClick,$TableauWasherNoClick); /*FUSI
 $TableauWacherR = unique_multidim_array($TableauWacherR,'Unique'); /*SUPPRESSION DOUBLON $TableauWacherR*/
 $TableauWacherR = TriTableau($TableauWacherR,'Unique', SORT_ASC);  /*TRI $TableauWacherR*/
 
-echo json_encode($TableauWacherR); /*TABLEAU FORMAT JSON*/
-
-exit();
 
 
 
@@ -671,10 +907,11 @@ exit();
         'Type' => $type_vehicule
          ],
         'preparateur' => [
-        'AdresseLat' => $adresseLat
+        'liste preparateur' => $TableauWacherR
          ],
         '_serialize' => ['success', 'data','preparateur']
     ]);
+
   }
 
 

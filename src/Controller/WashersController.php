@@ -57,6 +57,12 @@ class WashersController  extends AppController
          $this->loadComponent('Flash');
          parent::initialize();
 
+         $rdvavenircount = $this->Rdvs->find('all')
+         ->where(['preparateur_id' => $this->Auth->User('preparateur_id')])
+         ->where(['etat =' => 0 ]);
+         $rdvavenircountNb = $rdvavenircount->count();
+         $this->set('rdvavenircountNb', $rdvavenircountNb);
+
      }
 
 
@@ -325,8 +331,11 @@ class WashersController  extends AppController
 
     public function rdv() /*AFFICHAGE DES RDV WASHERS*/
     {
-      $rdvwashers = $this->Rdvs->find('all', ['contain' => ['Prestations', 'Clients']])
-      ->where(['preparateur_id =' => $this->Auth->User('preparateur_id') ]);
+      $rdvwashers = $this->Rdvs->find('all', [
+        'contain' => ['Prestations', 'Clients'] 
+     ])
+      ->where(['preparateur_id =' => $this->Auth->User('preparateur_id') ])
+      ->where(['etat !=' => 0 ]);
       $this->set('rdvwashers', $rdvwashers);
 
       $clientsNom = $this->Clients->find('list', ['fields' => ['id','name'] ])->toArray(); /*Nom du client*/
@@ -406,7 +415,7 @@ endif;
 }
 
 public function comptabilite() {
-  
+
 }
 
 public function exportcal() {

@@ -35,9 +35,8 @@ $this->end() ;
           <td><?= h($pointdevente->ville) ?></td>
           <td><?= h($pointdevente->cp) ?></td>
           <td><?= h($pointdevente->tel) ?></td>
-          <td class="actions">
+          <td class="actionss">
               <?= $this->Html->link(__('<i class="fa fa-pencil"></i>'), ['action' => 'edit', $pointdevente->id],['escape' => false]) ?>
-              <?= $this->Form->postLink(__('<i class="fa fa-trash"></i>'), ['action' => 'delete', $pointdevente->id], ['confirm' => __('Etes vous certain de vouloir supprimer {0}?', $pointdevente->nom) , 'escape' => false ]) ?>
           </td>
         </tr>
   <?php endforeach; ?>

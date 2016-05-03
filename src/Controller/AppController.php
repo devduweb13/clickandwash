@@ -64,7 +64,7 @@ class AppController extends Controller
         $this->set('roleAuthUser', $this->Auth->user('role'));
         $this->set('nomAuthUser', $this->Auth->user('username'));
         $this->set('idWasherAuthUser', $this->Auth->user('preparateur_id'));
-        
+
     }
 
     public function isAuthorized($user)
@@ -88,10 +88,13 @@ class AppController extends Controller
      */
     public function beforeRender(Event $event)
     {
+
         if (!array_key_exists('_serialize', $this->viewVars) &&
             in_array($this->response->type(), ['application/json', 'application/xml'])
-        ) {
+           )
+        {
             $this->set('_serialize', true);
+            
         }
 
          $this->Auth->allow(['index', 'view', 'display']);

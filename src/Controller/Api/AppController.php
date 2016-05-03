@@ -30,6 +30,8 @@ class AppController extends Controller
 
 /*CHARGEMENT CRUD ET CONFIGURATION DE L API*/
 
+
+
 use \Crud\Controller\ControllerTrait;
 
 public function initialize()
@@ -76,5 +78,7 @@ public function initialize()
             'checkAuthIn' => 'Controller.initialize'
         ]);
     }
+
+
 
 }

@@ -54,7 +54,7 @@ foreach ($marques as $marque ) {
 }
 foreach ($modeles as $modele ) {
 }
-
+$tableauVehiculeClient[$i]['id'] = $marque->id ;
 $tableauVehiculeClient[$i]['Marque'] = $marque->name ;
 $tableauVehiculeClient[$i]['Modele'] = $modele->name ;
 $tableauVehiculeClient[$i]['Annee']  = $vehiculeclient->annee ;

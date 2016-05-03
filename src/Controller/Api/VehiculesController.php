@@ -14,10 +14,38 @@ class VehiculesController extends AppController
   public function initialize()
   {
 
-
-      parent::initialize();
+    $this->loadModel('Modeles');
+    $this->loadModel('Marques');
+    $this->loadModel('Annulationrdvs');
+    parent::initialize();
 
   }
+
+  public function listemarque()
+  {
+    $marques = $this->Marques->find('all');
+    $this->set([
+        'success' => true,
+        'data' => [
+        'Marques' => $marques
+         ],
+        '_serialize' => ['success', 'data']
+    ]);
+  }
+
+  public function listemodele()
+  {
+    $modeles = $this->Modeles->find('all');
+    $this->set([
+        'success' => true,
+        'data' => [
+        'Modeles' => $modeles
+         ],
+        '_serialize' => ['success', 'data']
+    ]);
+  }
+
+
 
   public $paginate = [
          'page' => 1,

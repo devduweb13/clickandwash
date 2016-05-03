@@ -33,6 +33,18 @@ class PreparateursController extends AppController
 
   }
 
+  public function listeprestation()
+  {
+    $prestations = $this->Prestations->find('all');
+    $this->set([
+        'success' => true,
+        'data' => [
+        'Prestations' => $prestations
+         ],
+        '_serialize' => ['success', 'data']
+    ]);
+  }
+
   public function listerdv()
   {
       $user  = $this->Auth->identify();
